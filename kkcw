@@ -1,6 +1,6 @@
 #!/bin/bash
 
-usage () {
+[ "$1" == "--help" ] && {
 	cat <<- FIN >&2
 	kkcw: kkc wrapper
 	usage: echo <words> | kkcw
@@ -10,8 +10,6 @@ usage () {
 	FIN
 	exit 1
 }
-
-[ "$1" == "--help" ] && usage
 
 sed 's/$/ 1/'                   |
 kkc                             |
