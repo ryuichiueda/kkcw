@@ -3,7 +3,7 @@
 usage () {
 	cat <<- FIN >&2
 	kkcw: kkc wrapper
-	usage: kkcw
+	usage: echo <words> | kkcw
 
 	copyright 2019 Ryuichi Ueda
 	Licensed under the GNU GPLv3. See the file COPYING for details.
