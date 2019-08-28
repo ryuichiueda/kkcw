@@ -9,9 +9,10 @@ import (
     "io"
     "strings"
     "regexp"
+    "strconv"
 )
 
-const VERSION = "0.1.0"
+const VERSION = "0.2.0"
 
 func help() {
     fmt.Fprintf(os.Stderr, "kkcw: kkc wrapper %s\n", VERSION)
@@ -71,7 +72,7 @@ func kkc(token string) string {
 
     out, err := cmd.CombinedOutput()
     if err != nil {
-        fmt.Println("Command Exec Error.")
+        fmt.Fprintln(os.Stderr, "Command Exec Error.")
         fmt.Fprintln(os.Stderr, string(out))
 	os.Exit(1)
     }
@@ -87,34 +88,52 @@ func escape(text string) string {
     return ans
 }
 
-func concat(tokens []Token) string {
-    ans := tokens[0].results[0]
+func concat(tokens []Token, rank int) string {
+    ans := tokens[0].results[rank]
     for _, str := range tokens[1:] {
-        ans += " " + str.results[0]
+        ans += " " + str.results[rank]
     }
-    return ans
+    return ans + "\n"
 }
 
-func mainProc(str string) string {
+func mainProc(str string, candidate_num int) string {
     tokens := make([]Token, 0)
 
     slice := strings.Split(str, " ")
     for n, str := range slice {
         str_clean := escape(str)
-        out := kkc(str_clean)
+        out := kkc(str_clean + " " + strconv.Itoa(candidate_num))
 	tokens = append(tokens, parse(out, n))
     }
 
-    return concat(tokens)
+    var ans string
+    for n := 0; n < candidate_num; n++ {
+        ans += concat(tokens, n)
+    }
+    return ans
 }
 
 func main() {
+    var err error
+    cand_num := 1
+
     switch len(os.Args) {
     case 2:
         help()
         os.Exit(0)
-    default:
-	result := mainProc(readline())
-        fmt.Println(result)
+    case 3:
+        if os.Args[1] != "-n" {
+            fmt.Fprintln(os.Stderr, "Invalid Option")
+	    os.Exit(1)
+        }
+
+        cand_num, err = strconv.Atoi(os.Args[2])
+        if err != nil {
+            fmt.Fprintln(os.Stderr, "Invalid Number")
+	    os.Exit(1)
+        }
     }
+
+    result := mainProc(readline(), cand_num)
+    fmt.Print(result)
 }
