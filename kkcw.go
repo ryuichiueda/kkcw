@@ -12,13 +12,13 @@ import (
     "strconv"
 )
 
-const VERSION = "0.3.3"
+const VERSION = "0.3.4"
 
 func help() {
     fmt.Fprintf(os.Stderr, "kkcw: kkc wrapper %s\n", VERSION)
     fmt.Fprintln(os.Stderr, "Copyright (C) 2019 Ryuichi Ueda.")
     fmt.Fprintln(os.Stderr, "")
-    fmt.Fprintln(os.Stderr, "usage: echo <string> | kkcw")
+    fmt.Fprintln(os.Stderr, "usage: echo <string> | kkcw [-n <candidate number>]")
     fmt.Fprintln(os.Stderr, "")
     fmt.Fprintln(os.Stderr, "Released under the GPLv3")
     fmt.Fprintln(os.Stderr, "https://github.com/ryuichiueda/kkcw")
