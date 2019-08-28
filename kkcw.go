@@ -12,7 +12,7 @@ import (
     "strconv"
 )
 
-const VERSION = "0.3.0"
+const VERSION = "0.3.1"
 
 func help() {
     fmt.Fprintf(os.Stderr, "kkcw: kkc wrapper %s\n", VERSION)
@@ -103,28 +103,32 @@ func mainProc(str string, candidate_num int) string {
     return ans
 }
 
-func main() {
-    var err error
-    cand_num := 1
+func candNum() int {
+    if len(os.Args) != 3 {
+        return 1
+    }
 
-    switch len(os.Args) {
-    case 2:
+    if os.Args[1] != "-n" {
+        fmt.Fprintln(os.Stderr, "Invalid Option")
+        os.Exit(1)
+    }
+
+    cand_num, err := strconv.Atoi(os.Args[2])
+    if err != nil {
+        fmt.Fprintln(os.Stderr, "Invalid Number")
+        os.Exit(1)
+    }
+    return cand_num
+}
+
+func main() {
+    if len(os.Args) == 2 || len(os.Args) > 3 {
         help()
         os.Exit(0)
-    case 3:
-        if os.Args[1] != "-n" {
-            fmt.Fprintln(os.Stderr, "Invalid Option")
-	    os.Exit(1)
-        }
-
-        cand_num, err = strconv.Atoi(os.Args[2])
-        if err != nil {
-            fmt.Fprintln(os.Stderr, "Invalid Number")
-	    os.Exit(1)
-        }
     }
 
     stdin := bufio.NewScanner(os.Stdin)
+    cand_num := candNum()
     for stdin.Scan() {
         result := mainProc(stdin.Text(), cand_num)
         fmt.Print(result)
