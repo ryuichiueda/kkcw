@@ -11,17 +11,25 @@
 	exit 1
 }
 
-single () {
-	kkc <<< "$1 1"                  |
+single_word () {
+	kkc <<< "$1"                    |
 	grep -o '0: .*'                 |
 	sed 's@<\([^/]*\)/[^>]*>@\1@g'  |
 	sed 's/^0: //'
 }
 
-multi () {
+multi_words () {
 	xargs -n 1                           | 
-	while read w ; do single "$w"; done  |
+	while read w ; do single_word "$w"; done  |
 	xargs
 }
 
-multi
+single_word_multi_results () {
+	kkc <<< "$1 $2"                 |
+	grep -oE '[0-9]+: .*'           |
+	sed 's@<\([^/]*\)/[^>]*>@\1@g'  |
+	sed  -r 's/^[0-9]+: //'
+}
+
+multi_words
+#single_word_multi_results "やまだ" 10
